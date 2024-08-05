@@ -30,4 +30,4 @@ userForm.registerFormCallback = function(data) {
 			userForm.setErrorMessage(response.error);
 		}
 	});
-};sdsada
+};
