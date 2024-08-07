@@ -205,3 +205,4 @@ class FavoritesWidget {
 
 const favoritesWidget = new FavoritesWidget();
 favoritesWidget.getFavorites();
+ю
