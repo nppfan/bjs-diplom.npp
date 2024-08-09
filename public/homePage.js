@@ -1,24 +1,31 @@
 class LogoutButton {
     constructor() {
-        this.action = this.logout;
+        this.action = this.initLogout();
     }
 
-    logout() {
-        fetch('/api/logout', {
-            method: 'POST',
-        })
-        .then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                console.error('Ошибка при деавторизации');
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка сети:', error);
-        });
+    initLogout() {
+        return () => {
+
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include' 
+            })
+            .then(response => {
+                if (response.ok) {
+
+                    location.reload();
+                } else {
+                    console.error('Ошибка при выходе');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка сети:', error);
+            });
+        };
     }
 }
+
+const logoutButton = new LogoutButton();
 
 class UserProfile {
     getCurrentUser() {
