@@ -1,6 +1,6 @@
 class LogoutButton {
     constructor() {
-        this.action = this.location.reload();
+        this.action = location.reload();
     }
 }
 
