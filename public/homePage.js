@@ -30,21 +30,14 @@ getCurrencyRates();
 
 setInterval(getCurrencyRates, 60000);
 
-// Создание объекта типа MoneyManager
 const moneyManager = new MoneyManager();
 
-// Реализация пополнения баланса
 moneyManager.addMoneyCallback = (data) => {
-    // Выполнение запроса на пополнение баланса
     ApiConnector.addMoney(data, (response) => {
-        // Проверка успешности запроса
         if (response.success) {
-            // Отображаем новые данные о пользователе
             ProfileWidget.showProfile(response.data);
-            // Выводим сообщение об успехе
             moneyManager.setMessage(true, "Баланс успешно пополнен.");
         } else {
-            // Выводим сообщение об ошибке
             moneyManager.setMessage(false, response.error);
         }
     });
