@@ -1,194 +1,99 @@
-class LogoutButton {
-    constructor() {
-        this.action = location.reload();
-    }
-}
 
 const logoutButton = new LogoutButton();
+logoutButton.action = () => {
+    ApiConnector.logout((response) => {
+        if (response.success) {
+            location.reload(); 
+        }
+    });
+};
 
-class UserProfile {
-    getCurrentUser() {
-        fetch('/api/current')
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Не удалось получить информацию о пользователе');
-            })
-            .then(data => {
-                ProfileWidget.showProfile(data);
-            })
-            .catch(error => console.error(error));
+ApiConnector.current((response) => {
+    if (response.success) {
+        ProfileWidget.showProfile(response.data); 
     }
-}
-
-class RatesBoard {
-    getRates() {
-        fetch('/api/rates')
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Не удалось получить курсы валют');
-            })
-            .then(data => {
-                this.clearTable();
-                this.fillTable(data);
-            })
-            .catch(error => console.error(error));
-    }
-
-    clearTable() {
-
-    }
-
-    fillTable(data) {
-
-    }
-}
+});
 
 const ratesBoard = new RatesBoard();
-ratesBoard.getRates();
-setInterval(() => ratesBoard.getRates(), 60000); 
 
-
-class MoneyManager {
-    constructor() {
-        this.addMoneyCallback = this.addMoney.bind(this);
-        this.conversionMoneyCallback = this.convertMoney.bind(this);
-        this.sendMoneyCallback = this.sendMoney.bind(this);
-    }
-
-    addMoney(data) {
-        fetch('/api/addMoney', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Ошибка пополнения баланса');
-        })
-        .then(data => {
-            ProfileWidget.showProfile(data);
-            setMessage('Баланс успешно пополнен');
-        })
-        .catch(error => setMessage(error.message));
-    }
-
-    convertMoney(data) {
-        fetch('/api/convertMoney', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Ошибка конвертации валюты');
-        })
-        .then(data => {
-            ProfileWidget.showProfile(data);
-            setMessage('Валюта успешно конвертирована');
-        })
-        .catch(error => setMessage(error.message));
-    }
-
-    sendMoney(data) {
-        fetch('/api/transferMoney', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Ошибка перевода валюты');
-        })
-        .then(data => {
-            ProfileWidget.showProfile(data);
-            setMessage('Деньги успешно переведены');
-        })
-        .catch(error => setMessage(error.message));
-    }
+function getCurrencyRates() {
+    ApiConnector.getRates((response) => {
+        if (response.success) {
+            ratesBoard.clearTable();
+            ratesBoard.fillTable(response.data); 
+        }
+    });
 }
+
+getCurrencyRates();
+
+
+setInterval(getCurrencyRates, 60000);
 
 const moneyManager = new MoneyManager();
 
-class FavoritesWidget {
-    constructor() {
-        this.addUserCallback = this.addUser.bind(this);
-        this.removeUserCallback = this.removeUser.bind(this);
-    }
+moneyManager.addMoneyCallback = (data) => {
+    ApiConnector.addMoney(data, (response) => {
+        if (response.success) {
+            ProfileWidget.showProfile(response.data); 
+            moneyManager.setMessage(true, "Баланс успешно пополнен.");
+        } else {
+            moneyManager.setMessage(false, response.error); 
+        }
+    });
+};
 
-    getFavorites() {
-        fetch('/api/getFavorites')
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Не удалось получить избранное');
-            })
-            .then(data => {
-                this.clearTable();
-                this.fillTable(data);
-                this.updateUsersList(data);
-            })
-            .catch(error => console.error(error));
-    }
+moneyManager.conversionMoneyCallback = (data) => {
+    ApiConnector.convertMoney(data, (response) => {
+        if (response.success) {
+            ProfileWidget.showProfile(response.data); 
+            moneyManager.setMessage(true, "Валюта успешно конвертирована.");
+        } else {
+            moneyManager.setMessage(false, response.error); 
+        }
+    });
+};
 
-    clearTable() {
-    }
-
-    fillTable(data) {
-    }
-
-    updateUsersList(data) {
-    }
-
-    addUser(data) {
-        fetch('/api/addUserToFavorites', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Ошибка добавления пользователя в избранное');
-        })
-        .then(data => {
-            this.getFavorites();
-            setMessage('Пользователь успешно добавлен в избранное');
-        })
-        .catch(error => setMessage(error.message));
-    }
-
-    removeUser(data) {
-        fetch('/api/removeUserFromFavorites', {
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Ошибка удаления пользователя из избранного');
-        })
-        .then(data => {
-            this.getFavorites();
-            setMessage('Пользователь успешно удален из избранного');
-        })
-        .catch(error => setMessage(error.message));
-    }
-}
-
+moneyManager.sendMoneyCallback = (data) => {
+    ApiConnector.transferMoney(data, (response) => {
+        if (response.success) {
+            ProfileWidget.showProfile(response.data); 
+            moneyManager.setMessage(true, "Деньги успешно переведены.");
+        } else {
+            moneyManager.setMessage(false, response.error);
+        }
+    });
+};
 const favoritesWidget = new FavoritesWidget();
-favoritesWidget.getFavorites();
-ю
+
+ApiConnector.getFavorites((response) => {
+    if (response.success) {
+        favoritesWidget.clearTable(); 
+        favoritesWidget.fillTable(response.data); 
+        moneyManager.updateUsersList(response.data); 
+    }
+});
+
+favoritesWidget.addUserCallback = (data) => {
+    ApiConnector.addUserToFavorites(data, (response) => {
+        if (response.success) {
+            favoritesWidget.fillTable(response.data); 
+            moneyManager.updateUsersList(response.data); 
+            favoritesWidget.setMessage(true, "Пользователь успешно добавлен в избранное.");
+        } else {
+            favoritesWidget.setMessage(false, response.error); 
+        }
+    });
+};
+
+voritesWidget.removeUserCallback = (data) => {
+    ApiConnector.removeUserFromFavorites(data.id, (response) => {
+        if (response.success) {
+            favoritesWidget.fillTable(response.data); 
+            moneyManager.updateUsersList(response.data); 
+            favoritesWidget.setMessage(true, "Пользователь успешно удалён из избранного.");
+        } else {
+            favoritesWidget.setMessage(false, response.error); 
+        }
+    });
+};
