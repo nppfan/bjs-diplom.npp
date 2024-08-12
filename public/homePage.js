@@ -28,7 +28,7 @@ function getCurrencyRates() {
 getCurrencyRates();
 
 
-setInterval(getCurrencyRates, 60000);
+setInterval(getCurrencyRates);
 
 const moneyManager = new MoneyManager();
 

@@ -96,6 +96,30 @@
         "EUR": 0,
         "NTC": 0
       }
+    },
+    {
+      "created_at": "2024-08-12T09:56:07.192Z",
+      "login": "den",
+      "password": "111",
+      "id": 9,
+      "balance": {
+        "RUB": 0,
+        "USD": 0,
+        "EUR": 0,
+        "NTC": 0
+      }
+    },
+    {
+      "created_at": "2024-08-12T09:57:49.216Z",
+      "login": "denis",
+      "password": "111",
+      "id": 10,
+      "balance": {
+        "RUB": 0,
+        "USD": 0,
+        "EUR": 0,
+        "NTC": 0
+      }
     }
   ],
   "favorites": {
