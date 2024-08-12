@@ -1,27 +1,6 @@
 class LogoutButton {
     constructor() {
-        this.action = this.initLogout();
-    }
-
-    initLogout() {
-        return () => {
-
-            fetch('/logout', {
-                method: 'POST',
-                credentials: 'include' 
-            })
-            .then(response => {
-                if (response.ok) {
-
-                    location.reload();
-                } else {
-                    console.error('Ошибка при выходе');
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка сети:', error);
-            });
-        };
+        this.action = this.location.reload();
     }
 }
 
