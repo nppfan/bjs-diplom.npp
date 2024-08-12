@@ -3,7 +3,7 @@ class LogoutButton {
         this.action = location.reload();
     }
 }
-//aw
+
 const logoutButton = new LogoutButton();
 
 class UserProfile {
