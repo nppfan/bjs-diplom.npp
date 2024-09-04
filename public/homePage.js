@@ -89,7 +89,7 @@ favoritesWidget.addUserCallback = (data) => {
 };
 
 FavoritesWidget.removeUserCallback = (data) => {
-    ApiConnector.removeUserFromFavorites(data.id, (response) => {
+    ApiConnector.removeUserFromFavorites(data, (response) => {
         if (response.success) {
             favoritesWidget.fillTable(response.data); 
             moneyManager.updateUsersList(response.data); 
