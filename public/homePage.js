@@ -88,9 +88,10 @@ favoritesWidget.addUserCallback = (data) => {
     });
 };
 
-FavoritesWidget.removeUserCallback = (data) => {
+favoritesWidget.removeUserCallback = (data) => {
     ApiConnector.removeUserFromFavorites(data, (response) => {
         if (response.success) {
+            favoritesWidget.clearTable();
             favoritesWidget.fillTable(response.data); 
             moneyManager.updateUsersList(response.data); 
             favoritesWidget.setMessage(true, "Пользователь успешно удалён из избранного.");
